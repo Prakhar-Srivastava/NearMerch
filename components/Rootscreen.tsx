@@ -1,5 +1,5 @@
 import React from 'react'
-import {View,Image,TouchableOpacity,StatusBar,Text} from 'react-native'
+import {View,Image,TouchableOpacity,StatusBar,Text, Alert} from 'react-native'
 import {Actions} from 'react-native-router-flux'
 import global_style from '../styles/global.js'
 type Props={}
@@ -20,6 +20,14 @@ const Rootscreen=(props: Props)=>(
 		>
 			<Text style={{textAlign: 'center',color: '#fff'}}>
 				Find Mechanics
+			</Text>
+		</TouchableOpacity>
+		<TouchableOpacity
+			style={global_style.button}
+			onPress={()=>Actions.form()}
+		>
+			<Text style={{textAlign: 'center', color: '#fff'}}>
+				Add Mechanics
 			</Text>
 		</TouchableOpacity>
 	</View>

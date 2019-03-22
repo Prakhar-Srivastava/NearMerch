@@ -12,6 +12,8 @@ import {Component} from 'react'
 import {Router,Scene} from 'react-native-router-flux'
 import Rootscreen from './components/Rootscreen'
 import Mapscreen from './components/Mapscreen'
+import Form from './components/Form'
+import Login from './components/login'
 type Props = {}
 export default class App extends Component<Props> {
 	render() {
@@ -33,12 +35,17 @@ export default class App extends Component<Props> {
 					<Scene
 						key={'splash'}
 						title={'Near Mech'}
-						component={Rootscreen}
+						component={Login}
 					></Scene>
 					<Scene
 						key={'mapscr'}
 						title={'Map'}
 						component={Mapscreen}
+					></Scene>
+					<Scene
+						key={'form'}
+						title={'Add'}
+						component={Form}
 					></Scene>
 				</Scene>
 			</Router>

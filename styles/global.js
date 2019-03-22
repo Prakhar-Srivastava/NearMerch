@@ -5,7 +5,7 @@ const global_style = StyleSheet.create({
 		flex: 1,
 		justifyContent: 'center',
 		alignItems: 'center',
-		backgroundColor: '#F5FCFF',
+		backgroundColor: '#fff',
 	},
 	bg: {
 		zIndex: -1,
@@ -20,6 +20,8 @@ const global_style = StyleSheet.create({
 		paddingBottom: 5,
 		paddingLeft: 10,
 		paddingRight: 10,
+		marginBottom: 10,
+		marginTop: 20,
 		textAlign: 'center',
 		width: '98%',
 		backgroundColor: '#444',
