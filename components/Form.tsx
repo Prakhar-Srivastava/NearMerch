@@ -1,14 +1,20 @@
 import React from 'react'
-import { View,Text,TextInput,StyleSheet,TouchableOpacity,ScrollView } from 'react-native';
+import { View,Text,TextInput,StyleSheet,TouchableOpacity,ScrollView,ViewStyle,Alert } from 'react-native';
 import global_styles from '../styles/global'
+interface handleEditInterfaceForInputs{
+	(value: string): void,
+}
 type Props={
 	label?: string,
 	placeholder?: string,
 	keyboardType?: "default" | "email-address" | "numeric" | "phone-pad" | "visible-password" | "ascii-capable" | "numbers-and-punctuation" | "url" | "number-pad" | "name-phone-pad" | "decimal-pad" | "twitter" | "web-search" | undefined,
 	multiline?: boolean,
+	style4View?: ViewStyle,
+	isPassword?: false,
+	handleEdit?: handleEditInterfaceForInputs
 }
-const initila_state={}
-type State=Readonly<typeof initila_state>
+const initial_state={textValue: ''}
+type State=Readonly<typeof initial_state>
 const styles=StyleSheet.create({
 	input: {
 		backgroundColor: '#eee',
@@ -42,16 +48,28 @@ export class InputField extends React.Component<Props,State>{
 	placeholder: string
 	keyboardType: "default" | "email-address" | "numeric" | "phone-pad" | "visible-password" | "ascii-capable" | "numbers-and-punctuation" | "url" | "number-pad" | "name-phone-pad" | "decimal-pad" | "twitter" | "web-search" | undefined
 	multiline: boolean
+	isPassword: boolean
+	secureTextEntry: boolean
+	state: State
 	constructor(props: Props){
 		super(props)
 		this.label=props.label||'Label'
 		this.placeholder=props.placeholder||'Enter here'
 		this.keyboardType=props.keyboardType||'default'
 		this.multiline=props.multiline||false
+		this.isPassword=props.isPassword||false
+		this.secureTextEntry=this.isPassword||false
+		this.handleEdit=this.handleEdit.bind(this)
+		this.state=initial_state
+	}
+	handleEdit(textValue: string){
+		if(this.props.handleEdit)
+			this.props.handleEdit(textValue)
+		this.setState({textValue: textValue})
 	}
 	render(){
 		return(
-			<View style={[global_styles.container,{padding: 20,borderBottomColor: '#979797',borderBottomWidth: 0.7}]}>
+			<View style={[global_styles.container,{padding: 20,borderBottomColor: '#979797',borderBottomWidth: 0.7},this.props.style4View]}>
 				<Text
 					style={styles.label} ref={'label'}>
 					{this.label}
@@ -61,6 +79,9 @@ export class InputField extends React.Component<Props,State>{
 					placeholder={this.placeholder}
 					keyboardType={this.keyboardType}
 					multiline={this.multiline}
+					secureTextEntry={this.secureTextEntry}
+					onChangeText={this.handleEdit}
+					value={this.state.textValue}
 				/>
 			</View>
 		)
@@ -75,7 +96,7 @@ const Form=(props: any)=>(
 			<View style={[global_styles.container,{margin: 10}]}>
 				<TouchableOpacity 
 					style={[global_styles.button]}
-					onPress={()=>alert('Submitted!')}
+					onPress={()=>Alert.alert('Submitted!')}
 				>
 					<Text style={{color: '#fff',textAlign: 'center', padding: 5}}>Submit</Text>
 				</TouchableOpacity>

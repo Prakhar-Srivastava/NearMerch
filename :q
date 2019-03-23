@@ -32,20 +32,11 @@ export default class Login extends Component<Props,State>{
 	handleEmailEdit=(value: string)=>{
 		this.texts.email=value
 	}
-	handlePasswordEdit=(value: string)=>{
-		this.texts.password=value
-	}
 	handleClick(){
 		if(!this.state.isTouched)
 			return this.setState({...this.state, isTouched: true})
-		//Alert.alert('Texts',JSON.stringify(this.texts))
-		const {email,password}=this.texts
-		if(email==='test@test.com'&&password==='test')
-			return Actions.normaluser()
-		else if(email==='admin@test.com'&&password==='admin')
-			return Actions.admin()
-		else
-			Alert.alert('Invalid credentials','The provided credentiasls do not match any of the users\' details, please check.')
+		Alert.alert('Texts',this.texts.email)
+		return Actions.admin()
 	}
 	render(){
 		return (
@@ -64,7 +55,6 @@ export default class Login extends Component<Props,State>{
 					/>
 					<InputField
 						label={'Password'}
-						handleEdit={this.handlePasswordEdit}
 						isPassword={true}
 					/>
 				</ScrollView>

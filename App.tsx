@@ -14,6 +14,7 @@ import Rootscreen from './components/Rootscreen'
 import Mapscreen from './components/Mapscreen'
 import Form from './components/Form'
 import Login from './components/login'
+import NormalUser from './components/NormalUser'
 type Props = {}
 export default class App extends Component<Props> {
 	render() {
@@ -34,8 +35,18 @@ export default class App extends Component<Props> {
 				>
 					<Scene
 						key={'splash'}
-						title={'Near Mech'}
+						title={'Login'}
 						component={Login}
+					></Scene>
+					<Scene
+						key={'admin'}
+						title={'Admin Panel'}
+						component={Rootscreen}
+					></Scene>
+					<Scene
+						key={'normaluser'}
+						title={'Find Mechanics'}
+						component={NormalUser}
 					></Scene>
 					<Scene
 						key={'mapscr'}
