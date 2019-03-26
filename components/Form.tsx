@@ -1,5 +1,6 @@
 import React from 'react'
-import { View,Text,TextInput,StyleSheet,TouchableOpacity,ScrollView,ViewStyle,Alert } from 'react-native';
+import {Component} from 'react'
+import { View,Text,TextInput,StyleSheet,TouchableOpacity,ScrollView,ViewStyle,Alert,AsyncStorage} from 'react-native';
 import global_styles from '../styles/global'
 interface handleEditInterfaceForInputs{
 	(value: string): void,
@@ -87,20 +88,42 @@ export class InputField extends React.Component<Props,State>{
 		)
 	}
 }
-const Form=(props: any)=>(
+class Form extends Component<Props>{
+	lat=0.0
+	lon=0.0
+	name=''
+	constructor(props: Props){
+		super(props)
+	}
+	render(){ return (
 		<ScrollView style={{backgroundColor: '#fff'}}>
-			<InputField label={'Name'} placeholder={'John\'s Shop'}/>
-			<InputField label={'Contact Number'} placeholder={'1234567890'} keyboardType={'phone-pad'} />
-			<InputField label={'Email'} placeholder={'someone@example.com'} keyboardType={'email-address'} />
-			<InputField label={'Address'} />
+			<InputField label={'Name'} placeholder={'John\'s Shop'} handleEdit={value=>{this.name=value}}/>
+			<InputField label={'Latitude'} handleEdit={value=>{this.lat=parseFloat(value)}}/>
+			<InputField label={'Longitude'} handleEdit={value=>{this.lon=parseFloat(value)}}/>
 			<View style={[global_styles.container,{margin: 10}]}>
 				<TouchableOpacity 
 					style={[global_styles.button]}
-					onPress={()=>Alert.alert('Submitted!')}
+					onPress={()=>{
+						AsyncStorage.getItem('Markers',(err,res)=>{
+							let newObj={name: this.name,geometry:{location: {lat: this.lat,lng: this.lon}}}
+							if(res){
+								res=JSON.parse(res)
+								res.push(newObj)
+								AsyncStorage.setItem('Markers',JSON.stringify(res),
+								(err)=>err?Alert.alert('Error in storage',err.message):null)
+							}else
+							AsyncStorage.setItem('Markers',JSON.stringify({Markers: [newObj]}),
+							(err)=>Alert.alert('Error in setItem',err.message))
+							if(err)
+								Alert.alert('Error in getItem', JSON.stringify(err.message))
+						})
+						Alert.alert('Success',`New Mechanic ${this.name} addes successfully!`)
+					}}
 				>
 					<Text style={{color: '#fff',textAlign: 'center', padding: 5}}>Submit</Text>
 				</TouchableOpacity>
 			</View>
 		</ScrollView>
-)
+	)}
+	}
 export default Form

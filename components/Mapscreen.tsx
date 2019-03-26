@@ -1,12 +1,26 @@
 import React from 'react'
-import {View,Text,StyleSheet,Dimensions} from 'react-native'
+import {View,Text,StyleSheet,Dimensions,Alert,Image,AsyncStorage} from 'react-native'
 import global_style from '../styles/global.js'
 import MapView from 'react-native-maps'
 import {Marker,PROVIDER_GOOGLE} from 'react-native-maps'
 import Geolocation from 'react-native-geolocation-service'
 type Props={}
-const EmptyInitialState={}
-type State=Readonly<typeof EmptyInitialState>
+const initialLoc={
+	latitude: 0.0,
+	longitude: 0.0,
+	latitudeDelta: 0.0,
+	longitudeDelta: 0.0,
+}
+type currentLocType=typeof initialLoc
+const initialState={
+	currentLoc: initialLoc,
+	results: [],
+}
+type initialStateType={
+	currentLoc: currentLocType,
+	results: any[]|never[],
+}
+type State=Readonly<initialStateType>
 const {width,height}=Dimensions.get('window')
 const aspectratio=width/height
 const styles=StyleSheet.create({
@@ -178,40 +192,64 @@ const mapstyle=[
 const Loader = (props: Props)=>(
 	<Text>Getting your current location...</Text>
 )
+const BaseURL='https://maps.googleapis.com/maps/api/place/nearbysearch/json?key='
+const APIKey='AIzaSyCof3Ti1ZaxwbJQCPq2nCm4PTbuvOBeOWg'
+const option='rankby=distance&type=car_repair'
 export default class Mapscreen extends React.Component<Props,State>{
 	constructor(props: Props){
 		super(props)
-		this.state=EmptyInitialState
+		this.state=initialState
 	}
 	componentDidMount(){
 		Geolocation.getCurrentPosition(
-			position=>{
-				fetch(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=AIzaSyCof3Ti1ZaxwbJQCPq2nCm4PTbuvOBeOWg&location=${position.coords.latitude},${position.coords.longitude}&rankby=distance&type=car_repair`)
-					.then(resp=>resp.json())
-					.then(data=>this.setState({
-					currentLoc: {
-						latitude: position.coords.latitude,
-						longitude: position.coords.longitude,
-						latitudeDelta: 0.0922,
-						longitudeDelta: aspectratio,
-					},
-					results: data.results,
-				}))
-				},
-				error=>alert(error.message),
+			(position: any)=>{
+				const URL=`${BaseURL}${APIKey}&location=${position.coords.latitude},${position.coords.longitude}&${option}`
+				fetch(URL).then(resp=>resp.json()).then(data=>
+					{
+						AsyncStorage.getItem('Markers',
+						(error,markers)=>{
+							if(markers)
+								markers=JSON.parse(markers)
+							else{
+								 //Alert.alert('Storage error', JSON.stringify(error))
+								 markers=''
+							}
+							this.setState({
+								currentLoc: {
+									latitude: position.coords.latitude,
+									longitude: position.coords.longitude,
+									latitudeDelta: 0.0922,
+									longitudeDelta: aspectratio,
+								},
+								results: [...data.results,...markers],})
+						})
+				})},
+				(error: any)=>Alert.alert('Error',error.message),
 				{enableHighAccuracy: true,timeout: 15000,maximumAge: 1000}
-		)
+				)
 	}
 	render(){
 		return (
 			<View style={global_style.container} >
-				{this.state.currentLoc?
+				{this.state.results.length>0?
 					<MapView
 					provider={PROVIDER_GOOGLE}
 					style={styles.map}
 					initialRegion={this.state.currentLoc }
 					customMapStyle={mapstyle}
-					>{
+					>
+						<Marker
+							coordinate={{
+								latitude: this.state.currentLoc.latitude,
+								longitude: this.state.currentLoc.longitude
+							}}
+							title={'My Location'}
+						>
+								<Image
+									source={require('../images/marker-circle.png')}
+									style={{height: 10,width: 10}} />
+						</Marker>
+						{
 					this.state.results.map((res: any, index: number)=>{
 						const {lat,lng}=res.geometry.location
 						return (<Marker coordinate={{latitude: lat,longitude: lng}} title={res.name} key={index}/>)

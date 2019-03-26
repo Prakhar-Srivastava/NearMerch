@@ -15,6 +15,8 @@ import Mapscreen from './components/Mapscreen'
 import Form from './components/Form'
 import Login from './components/login'
 import NormalUser from './components/NormalUser'
+import MechTab from './components/tabular'
+import DelTab from './components/Delete';
 type Props = {}
 export default class App extends Component<Props> {
 	render() {
@@ -54,9 +56,19 @@ export default class App extends Component<Props> {
 						component={Mapscreen}
 					></Scene>
 					<Scene
+						key={'mechtab'}
+						title={'Added Mechanics'}
+						component={MechTab}
+					></Scene>
+					<Scene
 						key={'form'}
 						title={'Add'}
 						component={Form}
+					></Scene>
+					<Scene
+						key={'delmech'}
+						title={'Delete'}
+						component={DelTab}
 					></Scene>
 				</Scene>
 			</Router>

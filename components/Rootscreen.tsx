@@ -24,10 +24,26 @@ const Rootscreen=(props: Props)=>(
 		</TouchableOpacity>
 		<TouchableOpacity
 			style={global_style.button}
+			onPress={()=>Actions.mechtab()}
+		>
+			<Text style={{textAlign: 'center',color: '#fff'}}>
+				View Mechanics
+			</Text>
+		</TouchableOpacity>
+		<TouchableOpacity
+			style={global_style.button}
 			onPress={()=>Actions.form()}
 		>
 			<Text style={{textAlign: 'center', color: '#fff'}}>
 				Add Mechanics
+			</Text>
+		</TouchableOpacity>
+		<TouchableOpacity
+			style={global_style.button}
+			onPress={()=>Actions.delmech()}
+		>
+			<Text style={{textAlign: 'center',color: '#fff'}}>
+				Delete Mechanics
 			</Text>
 		</TouchableOpacity>
 	</View>
