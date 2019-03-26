@@ -117,7 +117,7 @@ class Form extends Component<Props>{
 							if(err)
 								Alert.alert('Error in getItem', JSON.stringify(err.message))
 						})
-						Alert.alert('Success',`New Mechanic ${this.name} addes successfully!`)
+						Alert.alert('Success',`New Mechanic ${this.name} added successfully!`)
 					}}
 				>
 					<Text style={{color: '#fff',textAlign: 'center', padding: 5}}>Submit</Text>
