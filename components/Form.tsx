@@ -88,36 +88,62 @@ export class InputField extends React.Component<Props,State>{
 		)
 	}
 }
+type Geo={
+	location: {
+		lat: number,
+		lng: number,
+	}
+}
+type TableRowProps={
+	name: string,
+	phone: number,
+	address: string,
+	geometry: Geo,
+}
 class Form extends Component<Props>{
 	lat=0.0
 	lon=0.0
 	name=''
+	phone=0
+	shopAddress=''
 	constructor(props: Props){
 		super(props)
 	}
 	render(){ return (
 		<ScrollView style={{backgroundColor: '#fff'}}>
 			<InputField label={'Name'} placeholder={'John\'s Shop'} handleEdit={value=>{this.name=value}}/>
-			<InputField label={'Latitude'} handleEdit={value=>{this.lat=parseFloat(value)}}/>
-			<InputField label={'Longitude'} handleEdit={value=>{this.lon=parseFloat(value)}}/>
+			<InputField label={'Latitude'} handleEdit={value=>{this.lat=parseFloat(value)}} keyboardType={'numeric'}/>
+			<InputField label={'Longitude'} handleEdit={value=>{this.lon=parseFloat(value)}} keyboardType={'numeric'}/>
+			<InputField label={'Phone Detail'} handleEdit={value=>this.phone=parseInt(value)} keyboardType={'numeric'}/>
+			<InputField label={'Shop Address'} handleEdit={value=>this.shopAddress=value} multiline={true}/>
 			<View style={[global_styles.container,{margin: 10}]}>
 				<TouchableOpacity 
 					style={[global_styles.button]}
 					onPress={()=>{
 						AsyncStorage.getItem('Markers',(err,res)=>{
-							let newObj={name: this.name,geometry:{location: {lat: this.lat,lng: this.lon}}}
+							const newObj: TableRowProps={name: this.name,
+								phone: this.phone,
+								address: this.shopAddress,
+									geometry:{
+										location:{
+												lat: this.lat,
+												lng: this.lon
+										}
+									}
+							}
+
 							if(res){
 								res=JSON.parse(res)
 								res.push(newObj)
 								AsyncStorage.setItem('Markers',JSON.stringify(res),
 								(err)=>err?Alert.alert('Error in storage',err.message):null)
 							}else
-							AsyncStorage.setItem('Markers',JSON.stringify({Markers: [newObj]}),
-							(err)=>Alert.alert('Error in setItem',err.message))
+							AsyncStorage.setItem('Markers',JSON.stringify([newObj]),
+							(err)=>err?Alert.alert('Error in setItem',err.message):null)
 							if(err)
 								Alert.alert('Error in getItem', JSON.stringify(err.message))
 						})
-						Alert.alert('Success',`New Mechanic ${this.name} added successfully!`)
+						Alert.alert('Success',`New Mechanic '${this.name}' added successfully!`)
 					}}
 				>
 					<Text style={{color: '#fff',textAlign: 'center', padding: 5}}>Submit</Text>

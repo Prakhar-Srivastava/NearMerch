@@ -1,8 +1,8 @@
 import React from 'react'
-import {View,Text,StyleSheet,Dimensions,Alert,Image,AsyncStorage} from 'react-native'
+import {View,Text,StyleSheet,Dimensions,Alert,Image,AsyncStorage,Linking,TouchableOpacity} from 'react-native'
 import global_style from '../styles/global.js'
 import MapView from 'react-native-maps'
-import {Marker,PROVIDER_GOOGLE} from 'react-native-maps'
+import {Marker,PROVIDER_GOOGLE,Callout} from 'react-native-maps'
 import Geolocation from 'react-native-geolocation-service'
 type Props={}
 const initialLoc={
@@ -26,7 +26,23 @@ const aspectratio=width/height
 const styles=StyleSheet.create({
 	map: {
 		...StyleSheet.absoluteFillObject,
-	}
+	},
+	markerCallout: {
+		...global_style.container,
+		backgroundColor: '#fff',
+		padding: 5,
+		borderRadius: 13,
+		width: 200,
+	},
+	calloutTitle: {
+		fontWeight: 'bold',
+		fontSize: 15,
+
+	},
+	callButton: {
+		...global_style.button,
+		backgroundColor: 'green',
+	},
 })
 const mapstyle=[
   {
@@ -252,7 +268,19 @@ export default class Mapscreen extends React.Component<Props,State>{
 						{
 					this.state.results.map((res: any, index: number)=>{
 						const {lat,lng}=res.geometry.location
-						return (<Marker coordinate={{latitude: lat,longitude: lng}} title={res.name} key={index}/>)
+						return (<Marker
+							coordinate={{latitude: lat,longitude: lng}}
+							title={res.name}
+							description={res.vicinity}
+							key={index} >
+						<Callout tooltip>
+							<View style={styles.markerCallout}>
+								<Text style={styles.calloutTitle}>{res.name}</Text>
+								<Text>{'\n'}{res.vicinity||res.address}</Text>
+								{res.phone?<Text>Contact: {res.phone}</Text>:null}
+							</View>
+							</Callout>
+						</Marker>)
 				})
 					}</MapView>:<Loader />}
 			</View>

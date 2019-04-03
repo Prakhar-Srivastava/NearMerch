@@ -86,6 +86,18 @@ export default class Login extends Component<Props,State>{
 							Login
 					</Text>
 				</TouchableOpacity>
+				<TouchableOpacity
+					style={global_style.button}
+					onPress={()=>Actions.mapscr()}
+				>
+					<Text
+						style={{
+							textAlign: 'center',
+							color: '#fff'
+						}}>
+							Find Mechanics
+					</Text>
+				</TouchableOpacity>
 			</View>
 		)
 	}

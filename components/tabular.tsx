@@ -1,6 +1,6 @@
 import React from 'react'
 import {Component,ReactNode} from 'react'
-import {View,Text,StyleSheet,Alert,AsyncStorage,ScrollView, TouchableOpacity,} from 'react-native'
+import {View,Text,StyleSheet,Alert,AsyncStorage,ScrollView, TouchableOpacity,Linking} from 'react-native'
 import global_styles from '../styles/global'
 type Loc={
 	lat: Number,
@@ -14,6 +14,8 @@ type onClickType={
 }
 type TableRowProps={
 	name: string,
+	phone: number,
+	address: string,
 	geometry: Geo,
 	index?: number,
 	onClick?: onClickType,
@@ -51,6 +53,13 @@ export const TableRow=(props: TableRowProps)=>(
 		<Text style={rowStyle.name}>{props.name}</Text>
 		<Text style={rowStyle.location}>Latitude: {props.geometry.location.lat}</Text>
 		<Text style={rowStyle.location}>Longitude: {props.geometry.location.lng}</Text>
+		<Text style={rowStyle.location}>Address: {props.address}</Text>
+		<TouchableOpacity
+			style={global_styles.button}
+			onPress={()=>Linking.openURL(`tel:${props.phone}`)}>
+			<Text style={{color: '#fff',textAlign: 'center'}}>Call {props.phone}</Text>
+		</TouchableOpacity>
+		
 		{props.onClick?(
 			<TouchableOpacity
 				onPress={props.onClick}
@@ -63,9 +72,10 @@ export const TableRow=(props: TableRowProps)=>(
 		):null}
 	</View>
 )
-type State={
+type state={
 	results?: TableRowProps[],
 }
+type State=Readonly<state>
 type Props={}
 export default class Tab extends Component<Props,State>{
 	state: State={}
@@ -94,7 +104,13 @@ export default class Tab extends Component<Props,State>{
 			backgroundColor: '#fff',
 		}}>
 			{this.isDataLoaded()?
-			this.state.results.map((i,idx)=><TableRow geometry={i.geometry} name={i.name} key={idx}/>)
+				this.state.results.map((props: TableRowProps,idx: number): ReactNode=><TableRow
+			name={props.name}
+			phone={props.phone}
+			address={props.address}
+			key={idx}
+			geometry={props.geometry}
+			/>)
 			:<Text>No data found!!</Text>}
 		</ScrollView>)
 	}

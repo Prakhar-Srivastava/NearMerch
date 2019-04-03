@@ -11,6 +11,8 @@ type Geo={
 }
 type TableRowProps={
 	name: string,
+	phone: number,
+	address: string,
 	geometry: Geo,
 	index?: number
 	(event?: any): void,
@@ -52,7 +54,7 @@ export default class DelTab extends Component<Props,State>{
 			backgroundColor: '#fff',
 		}}>
 			{this.isDataLoaded()?
-				this.state.results.map((i,idx)=><TableRow geometry={i.geometry} name={i.name} key={idx} onClick={()=>{
+				this.state.results.map((i,idx)=><TableRow geometry={i.geometry} name={i.name} key={idx} phone={i.phone} address={i.address} onClick={()=>{
 					this.setState(prevState=>{
 						let {results} = prevState
 						if(results){
