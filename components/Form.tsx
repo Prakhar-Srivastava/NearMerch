@@ -2,6 +2,7 @@ import React from 'react'
 import {Component} from 'react'
 import { View,Text,TextInput,StyleSheet,TouchableOpacity,ScrollView,ViewStyle,Alert,AsyncStorage} from 'react-native';
 import global_styles from '../styles/global'
+import {Actions} from 'react-native-router-flux'
 interface handleEditInterfaceForInputs{
 	(value: string): void,
 }
@@ -101,13 +102,18 @@ type TableRowProps={
 	geometry: Geo,
 }
 class Form extends Component<Props>{
-	lat=0.0
-	lon=0.0
-	name=''
-	phone=0
-	shopAddress=''
+	lat: number|undefined
+	lon: number|undefined
+	name: string|undefined
+	phone: number|undefined
+	shopAddress: string|undefined
 	constructor(props: Props){
 		super(props)
+	}
+	verification(): boolean{
+		if(typeof this.lat === 'number' && typeof this.lon === 'number' && typeof this.name === 'string' && typeof this.phone === 'number' && typeof this.shopAddress === 'string')
+			return true
+		return false
 	}
 	render(){ return (
 		<ScrollView style={{backgroundColor: '#fff'}}>
@@ -119,17 +125,17 @@ class Form extends Component<Props>{
 			<View style={[global_styles.container,{margin: 10}]}>
 				<TouchableOpacity 
 					style={[global_styles.button]}
-					onPress={()=>{
+					onPress={()=>{if(this.verification()){
 						AsyncStorage.getItem('Markers',(err,res)=>{
 							const newObj: TableRowProps={name: this.name,
 								phone: this.phone,
 								address: this.shopAddress,
-									geometry:{
-										location:{
-												lat: this.lat,
-												lng: this.lon
-										}
+								geometry:{
+									location:{
+											lat: this.lat,
+											lng: this.lon
 									}
+								}
 							}
 
 							if(res){
@@ -144,6 +150,10 @@ class Form extends Component<Props>{
 								Alert.alert('Error in getItem', JSON.stringify(err.message))
 						})
 						Alert.alert('Success',`New Mechanic '${this.name}' added successfully!`)
+						Actions.mapscr()
+					}
+						else
+						Alert.alert('Value Error', 'Please fill all the details with correct values')
 					}}
 				>
 					<Text style={{color: '#fff',textAlign: 'center', padding: 5}}>Submit</Text>

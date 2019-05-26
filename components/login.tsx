@@ -2,7 +2,6 @@ import React from 'react'
 import {Component} from 'react'
 import {View,StyleSheet,Text,TouchableOpacity,ScrollView,Image,Alert} from 'react-native'
 import {Actions} from 'react-native-router-flux'
-//import * as firebase from 'firebase'
 import {InputField} from './Form'
 import global_style from '../styles/global.js'
 const initial_state={
@@ -19,8 +18,6 @@ const firebaseConfig={
 	storageBucket: 'mistri-app-1551015331280.appspot.com',
 	messagingSenderId: '1067777476274',
 }
-//firebase.initializeApp(firebaseConfig)
-//const rootRef=firebase.database
 export default class Login extends Component<Props,State>{
 	state: State=initial_state
 	texts: {email: string,password: string}
@@ -38,7 +35,6 @@ export default class Login extends Component<Props,State>{
 	handleClick(){
 		if(!this.state.isTouched)
 			return this.setState({...this.state, isTouched: true})
-		//Alert.alert('Texts',JSON.stringify(this.texts))
 		const {email,password}=this.texts
 		if(email==='test@test.com'&&password==='test')
 			return Actions.normaluser()

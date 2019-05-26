@@ -1,5 +1,5 @@
 import React from 'react'
-import {View,Text,StyleSheet,Dimensions,Alert,Image,AsyncStorage,Linking,TouchableOpacity} from 'react-native'
+import {View,Text,StyleSheet,Dimensions,Alert,Image,AsyncStorage,Linking,TouchableOpacity,Button} from 'react-native'
 import global_style from '../styles/global.js'
 import MapView from 'react-native-maps'
 import {Marker,PROVIDER_GOOGLE,Callout} from 'react-native-maps'
@@ -11,14 +11,19 @@ const initialLoc={
 	latitudeDelta: 0.0,
 	longitudeDelta: 0.0,
 }
-type currentLocType=typeof initialLoc
+type currentLocType={
+	latitude: number,
+	longitude: number,
+	latitudeDelta: number,
+	longitudeDelta: number,
+}
 const initialState={
 	currentLoc: initialLoc,
 	results: [],
 }
 type initialStateType={
 	currentLoc: currentLocType,
-	results: any[]|never[],
+	results: [],
 }
 type State=Readonly<initialStateType>
 const {width,height}=Dimensions.get('window')
@@ -33,15 +38,32 @@ const styles=StyleSheet.create({
 		padding: 5,
 		borderRadius: 13,
 		width: 200,
+		position: 'relative',
 	},
 	calloutTitle: {
+		...global_style.container,
 		fontWeight: 'bold',
 		fontSize: 15,
-
+		flexDirection: 'row',
+		flexWrap: 'wrap',
+	},
+	callButtonWrapper: {
+		alignSelf: 'flex-end',
+		justifyContent: 'flex-end',
+		alignItems: 'flex-end',
+		position: 'absolute',
+		right: -75,
+		borderRadius: 300,
+		top: 2,
 	},
 	callButton: {
-		...global_style.button,
-		backgroundColor: 'green',
+		backgroundColor: 'skyblue',
+		textAlign: 'center',
+		width: 28,
+		paddingTop: 3,
+		paddingBottom: 3,
+		height: 28,
+		borderRadius: 300,
 	},
 })
 const mapstyle=[
@@ -208,10 +230,20 @@ const mapstyle=[
 const Loader = (props: Props)=>(
 	<Text>Getting your current location...</Text>
 )
+const CustomCallout=({name,phone,vicinity,address})=>{
+	return (<View style={styles.markerCallout}>
+		<View style={styles.calloutTitle}><Text style={{fontWeight: 'bold',fontSize: 15,}}>{name}</Text>
+				{phone? <View style={styles.callButtonWrapper}><Text style={styles.callButton}>&#x1f4de;</Text></View>:null}
+		</View>
+			<Text>{'\n'}{vicinity||address}</Text>
+				{phone?<Text>Contact: {phone}</Text>:null}
+		</View>)
+}
 const BaseURL='https://maps.googleapis.com/maps/api/place/nearbysearch/json?key='
 const APIKey='AIzaSyCof3Ti1ZaxwbJQCPq2nCm4PTbuvOBeOWg'
 const option='rankby=distance&type=car_repair'
 export default class Mapscreen extends React.Component<Props,State>{
+	state: State
 	constructor(props: Props){
 		super(props)
 		this.state=initialState
@@ -273,13 +305,12 @@ export default class Mapscreen extends React.Component<Props,State>{
 							title={res.name}
 							description={res.vicinity}
 							key={index} >
-						<Callout tooltip>
-							<View style={styles.markerCallout}>
-								<Text style={styles.calloutTitle}>{res.name}</Text>
-								<Text>{'\n'}{res.vicinity||res.address}</Text>
-								{res.phone?<Text>Contact: {res.phone}</Text>:null}
-							</View>
-							</Callout>
+						<Callout
+							tooltip
+							onPress={()=>res.phone?Linking.openURL(`tel:${res.phone}`):undefined}
+						>
+							<CustomCallout {...res}/>
+						</Callout>
 						</Marker>)
 				})
 					}</MapView>:<Loader />}
